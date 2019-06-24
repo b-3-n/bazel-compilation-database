@@ -54,12 +54,12 @@ def _is_cpp_target(srcs):
 def _sources(target, ctx):
     srcs = []
     if "srcs" in dir(ctx.rule.attr):
-        srcs += [f for src in ctx.rule.attr.srcs for f in src.files]
+        srcs += [f for src in ctx.rule.attr.srcs for f in src.files.to_list()]
     if "hdrs" in dir(ctx.rule.attr):
-        srcs += [f for src in ctx.rule.attr.hdrs for f in src.files]
+        srcs += [f for src in ctx.rule.attr.hdrs for f in src.files.to_list()]
 
     if ctx.rule.kind == "cc_proto_library":
-        srcs += [f for f in target.files if f.extension in ["h", "cc"]]
+        srcs += [f for f in target.files.to_list() if f.extension in ["h", "cc"]]
 
     return srcs
 
@@ -97,7 +97,6 @@ def _compilation_database_aspect_impl(target, ctx):
         "cc_binary",
         "cc_test",
         "cc_inc_library",
-        "cc_proto_library",
     ]:
         return []
 
@@ -105,6 +104,7 @@ def _compilation_database_aspect_impl(target, ctx):
 
     cc_toolchain = find_cpp_toolchain(ctx)
     feature_configuration = cc_common.configure_features(
+        ctx = ctx,
         cc_toolchain = cc_toolchain,
         requested_features = ctx.features,
         unsupported_features = ctx.disabled_features,

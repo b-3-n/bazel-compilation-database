@@ -34,7 +34,8 @@ readonly QUERY_CMD=(
   bazel query
     --noshow_progress
     --noshow_loading_progress
-    'kind("cc_(library|binary|test|inc_library|proto_library)", //...)'
+    --incompatible_depset_union=false
+   'kind("cc_(library|binary|test|inc_library|proto_library)", //...)'
 )
 
 # Clean any previously generated files.
@@ -44,10 +45,9 @@ fi
 
 # shellcheck disable=SC2046
 bazel build \
+  --output_groups=+$OUTPUT_GROUPS \
   --aspects="${ASPECTS_FILE}"%compilation_database_aspect \
-  --noshow_progress \
-  --noshow_loading_progress \
-  --output_groups="${OUTPUT_GROUPS}" \
+  --incompatible_depset_union=false \
   "$@" \
   $("${QUERY_CMD[@]}") > /dev/null
 
