@@ -192,6 +192,7 @@ def FlagsForFile(filename, **kwargs):
         aspect_definition,
         repository_override,
         '--output_groups=compdb_files',
+        '--incompatible_depset_union=false',
     ] + labels
     subprocess.check_call(bazel_aspects)
     aspects_filepath = get_aspects_filepath(labels[0], bazel_bin)
